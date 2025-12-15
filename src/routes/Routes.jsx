@@ -6,16 +6,18 @@ import Contact from "../pages/Contact";
 import Dashboard from "../pages/Dashboard";
 import Login from "../pages/Login";
 import Main from "../layouts/Main";
+import ProductDetails from "../components/ProductDetails";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Main />,
     children: [
-      { path: "/", element: <Home /> },
-      { path: "/contact", element: <Contact /> },
-      { path: "/dashboard", element: <Dashboard /> },
-      { path: "/login", element: <Login /> },
+      { index: true, element: <Home /> },
+      { path: "contact", element: <Contact /> },
+      { path: "dashboard", element: <Dashboard /> },
+      { path: "login", element: <Login /> },
+      { path: "products/:id", element: <ProductDetails /> },
       { path: "*", element: <div>404 Not Found</div> },
     ],
   },
