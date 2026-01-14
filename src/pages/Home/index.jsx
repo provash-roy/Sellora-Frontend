@@ -21,8 +21,7 @@ const Home = () => {
 
   return (
     <>
-      <div>
-        <div className="text-2xl text-center">Welcome To Sellora Home Page</div>
+      <div className="mx-8">
         <div className="flex flex-wrap gap-4 justify-center mt-4">
           {products.map((product) => {
             return (

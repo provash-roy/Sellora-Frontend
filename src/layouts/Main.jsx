@@ -1,11 +1,14 @@
 import React from "react";
 import Navbar from "../components/shared/Navbar";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 
 const Main = () => {
+  const location = useLocation();
+  const hideNavbar = location.pathname === "/login";
+
   return (
     <div>
-      <Navbar />
+      {!hideNavbar && <Navbar />}
       <Outlet />
     </div>
   );
