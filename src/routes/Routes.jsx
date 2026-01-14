@@ -7,6 +7,7 @@ import Dashboard from "../pages/Dashboard";
 import Login from "../pages/Login";
 import Main from "../layouts/Main";
 import ProductDetails from "../components/ProductDetails";
+import Register from "../pages/Register";
 
 const router = createBrowserRouter([
   {
@@ -17,6 +18,7 @@ const router = createBrowserRouter([
       { path: "contact", element: <Contact /> },
       { path: "dashboard", element: <Dashboard /> },
       { path: "login", element: <Login /> },
+      { path: "register", element: <Register /> },
       { path: "products/:id", element: <ProductDetails /> },
       { path: "*", element: <div>404 Not Found</div> },
     ],

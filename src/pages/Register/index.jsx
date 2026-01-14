@@ -2,22 +2,25 @@ import React, { useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 
-const Login = () => {
+const Register = () => {
   const navigate = useNavigate();
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
   const validate = () => {
     setError("");
+    if (!name) return "Name is required";
     if (!email) return "Email is required";
-    // simple email check
     const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRe.test(email)) return "Enter a valid email";
     if (!password) return "Password is required";
     if (password.length < 6) return "Password must be at least 6 characters";
+    if (password !== confirmPassword) return "Passwords do not match";
     return "";
   };
 
@@ -29,16 +32,19 @@ const Login = () => {
     setLoading(true);
     setError("");
     try {
-      const res = await axios.post("/api/auth/login", { email, password });
-      // assume response contains token and user
+      const res = await axios.post("/api/auth/register", {
+        name,
+        email,
+        password,
+      });
       const { data } = res;
       if (data?.token) {
         localStorage.setItem("token", data.token);
       }
-      // navigate to dashboard or home
       navigate("/dashboard");
     } catch (err) {
-      const msg = err?.response?.data?.message || err.message || "Login failed";
+      const msg =
+        err?.response?.data?.message || err.message || "Registration failed";
       setError(msg);
     } finally {
       setLoading(false);
@@ -49,7 +55,7 @@ const Login = () => {
     <div className="min-h-screen flex items-center justify-center px-4">
       <div className="w-full max-w-md bg-white rounded-lg shadow-md p-6">
         <h2 className="text-2xl font-semibold text-center mb-4">
-          Login to Sellora
+          Create an account
         </h2>
 
         {error && (
@@ -58,13 +64,40 @@ const Login = () => {
           </div>
         )}
 
-        {error && (
-          <div className="mb-4 text-sm text-red-700 bg-red-100 p-2 rounded">
-            {error}
+        <div className="flex flex-col gap-3 mb-4">
+          <button
+            type="button"
+            onClick={() => (window.location.href = "/api/auth/google")}
+            className="w-full py-2 flex items-center justify-center gap-2 border rounded hover:bg-gray-50"
+          >
+            <img
+              src="/assets/google-logo.png"
+              alt="Google"
+              className="w-5 h-5"
+              onError={(e) => (e.target.style.display = "none")}
+            />
+            Continue with Google
+          </button>
+
+          <div className="flex items-center gap-2">
+            <div className="flex-1 h-px bg-gray-200" />
+            <span className="text-sm text-gray-400">or</span>
+            <div className="flex-1 h-px bg-gray-200" />
           </div>
-        )}
+        </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium mb-1">Full name</label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+              placeholder="Your full name"
+            />
+          </div>
+
           <div>
             <label className="block text-sm font-medium mb-1">Email</label>
             <input
@@ -84,7 +117,7 @@ const Login = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-200"
-                placeholder="Your password"
+                placeholder="Create a password"
               />
               <button
                 type="button"
@@ -96,17 +129,17 @@ const Login = () => {
             </div>
           </div>
 
-          <div className="flex items-center justify-between">
-            <label className="text-sm flex items-center gap-2">
-              <input type="checkbox" className="form-checkbox" />
-              <span>Remember me</span>
+          <div>
+            <label className="block text-sm font-medium mb-1">
+              Confirm password
             </label>
-            <Link
-              to="/contact"
-              className="text-sm text-indigo-600 hover:underline"
-            >
-              Forgot password?
-            </Link>
+            <input
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+              placeholder="Repeat your password"
+            />
           </div>
 
           <div>
@@ -115,36 +148,15 @@ const Login = () => {
               disabled={loading}
               className="w-full py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 disabled:opacity-60"
             >
-              {loading ? "Signing in..." : "Sign in"}
+              {loading ? "Creating account..." : "Create account"}
             </button>
-          </div>
-          <div className="flex flex-col gap-3 mb-4">
-            <button
-              type="button"
-              onClick={() => (window.location.href = "/api/auth/google")}
-              className="w-full py-2 flex items-center justify-center gap-2 border rounded hover:bg-gray-50"
-            >
-              <img
-                src="/assets/google-logo.png"
-                alt="Google"
-                className="w-5 h-5"
-                onError={(e) => (e.target.style.display = "none")}
-              />
-              Continue with Google
-            </button>
-
-            <div className="flex items-center gap-2">
-              <div className="flex-1 h-px bg-gray-200" />
-              <span className="text-sm text-gray-400">or</span>
-              <div className="flex-1 h-px bg-gray-200" />
-            </div>
           </div>
         </form>
 
         <p className="text-center text-sm mt-4">
-          Don't have an account?{" "}
-          <Link to="/register" className="text-indigo-600 hover:underline">
-            Sign up
+          Already have an account?{" "}
+          <Link to="/login" className="text-indigo-600 hover:underline">
+            Sign in
           </Link>
         </p>
       </div>
@@ -152,4 +164,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Register;
